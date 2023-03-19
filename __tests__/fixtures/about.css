@@ -1,0 +1,44 @@
+@-webkit-keyframes nodeInserted {
+  from {
+    opacity: 0.99;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes nodeInserted {
+  from {
+    opacity: 0.99;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@media only screen and (-webkit-min-device-pixel-ratio: 1.25),
+only screen and (min-device-pixel-ratio: 1.25),
+only screen and (-webkit-min-device-pixel-ratio: 2.0833333333333335),
+only screen and (min-resolution: 200dpi),
+only screen and (min-resolution: 1.25dppx) {
+  html.artdeco {
+    -webkit-font-smoothing: subpixel-antialiased;
+  }
+}
+
+@media screen {
+  .flex {
+    display: flex;
+  }
+}
+
+.body {
+  margin: 0;
+  padding: 0;
+}
+
+.footer {
+  background: --var(color-primary);
+}

@@ -1,0 +1,29 @@
+
+
+@media screen {
+  .flex {
+    display: flex;
+  }
+}
+
+.block {
+  display: block;
+}
+
+.card-container {
+  background: white;
+  border: solid 1px rgba(0, 0, 0, 0.08);
+}
+
+@media print {
+
+  .container-header:before,
+  h1>.primary-title {
+    height: 20px;
+    color: var(--text-color-text-primary);
+  }
+}
+
+.footer {
+  background: --var(color-primary);
+}
