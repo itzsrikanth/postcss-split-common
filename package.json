@@ -9,7 +9,7 @@
     "postcss-split-common"
   ],
   "scripts": {
-    "test": "jest --coverage && eslint ."
+    "test": "jest && eslint ."
   },
   "author": "Srikanth Sharma <snow.650@gmail.com>",
   "license": "MIT",

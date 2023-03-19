@@ -42,7 +42,7 @@ module.exports = ({
     const commonMap = new Map();
     const commonRoot = postcss.root();
 
-    function addToMap(hash) {
+    function addToMap(rule, hash) {
       if (commonMap[hash]) {
         commonMap[hash] += 1;
         if (commonMap[hash] === minimumOccurance) {
@@ -61,22 +61,23 @@ module.exports = ({
       }
     }
 
+    // eslint-disable-next-line no-unused-vars
     const rootList = getCssContent({
       stylePaths,
       globPatterns
     }).map(cssContent => {
       const parsedContent = postcss.parse(cssContent);
       parsedContent.walkAtRules(atRule => {
-        addToMap(`${atRule.name}@${atRule.params.replace(/\s+/g, '_')}#`);
+        addToMap(atRule, `${atRule.name}@${atRule.params.replace(/\s+/g, '_')}#`);
       });
       parsedContent.walkDecls(decl => {
         // ToDo: parse value to minify to a standard hash value, or use after `cssnano`
         decl.hash = `${decl.prop}:${decl.value};`;
       });
       parsedContent.walkRules(rule => {
-        if (!rule.parent.name?.includes('keyframes')) {
+        if (!(rule.parent.name && rule.parent.name.includes('keyframes'))) {
           // ToDo: sort by property before reduce
-          addToMap(`${rule.selector}{${rule.nodes.reduce((acc, node) => acc + node.hash, '')}}`);
+          addToMap(rule, `${rule.selector}{${rule.nodes.reduce((acc, node) => acc + node.hash, '')}}`);
         }
       });
       parsedContent.walkAtRules(atRule => {
