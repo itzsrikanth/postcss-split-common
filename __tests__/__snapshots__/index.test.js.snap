@@ -1,3 +1,18 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`split common rules do nothing 1`] = `""`;
+exports[`split common rules do nothing 1`] = `
+"
+
+@media screen {
+  .flex {
+    display: flex;
+  }
+}
+
+@media screen {
+}
+
+.footer {
+  background: --var(color-primary);
+}"
+`;

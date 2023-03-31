@@ -6,12 +6,15 @@ const plugin = require('..');
 async function run() {
   const stylePaths = path.join(__dirname, 'fixtures');
   const result = await postcss([
-    plugin({ stylePaths })
+    plugin({
+      stylePaths,
+      outputDir: stylePaths
+     })
   ]).process('', {
     from: undefined
   });
   expect(result.css).toMatchSnapshot();
-  // expect(processor.warnings()).toHaveLength(0);
+  expect(result.warnings()).toHaveLength(0);
 }
 
 describe('split common rules', () => {

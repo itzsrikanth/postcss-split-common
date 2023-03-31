@@ -36,23 +36,34 @@ function getCssContent({ stylePaths, globPatterns }) {
 module.exports = ({
   stylePaths,
   globPatterns = ['**/*.css'],
-  minimumOccurance = 2
+  minimumOccurance = 2,
+  outputDir = __dirname,
+  outputFileName = 'common.css'
 }) => {
-  return () => {
-    const commonMap = new Map();
-    const commonRoot = postcss.root();
+  return (commonRoot) => {
+    const commonMap = new Map(),
+     commonFile = path.join(outputDir, outputFileName);
 
     function addToMap(rule, hash) {
       if (commonMap[hash]) {
         commonMap[hash] += 1;
         if (commonMap[hash] === minimumOccurance) {
+          let atRuleCloned;
           switch (rule.parent.type) {
             case 'root':
-              commonRoot.append(rule);
+              commonRoot.append(rule.clone());
               break;
             case 'atrule':
                 rule.shouldMove = true;
-                rule.parent.hasCommonRule = true;
+                if (!rule.parent.hasCommonRule) {
+                  rule.parent.hasCommonRule = true;
+                  /* when a rule is inside at-rule, it is cloned and children nodes are emptied
+                   * and added to the root. All the future rules with same parent will be added
+                   * to this */
+                  atRuleCloned = rule.parent.clone();
+                  atRuleCloned.nodes = [];
+                  commonRoot.append(atRuleCloned);
+                }
                 break;
           }
         }
@@ -82,14 +93,14 @@ module.exports = ({
       });
       parsedContent.walkAtRules(atRule => {
         if (atRule.parent.type === 'root' && atRule.hasCommonRule) {
-          const clonedAtRule = atRule.clone();
-          clonedAtRule.nodes = atRule.nodes.filter(node => node.shouldMove);
-          commonRoot.append(clonedAtRule);
+          const atRuleAtRoot = commonRoot.nodes.find(node => node.hash === atRule.hash);
+          atRuleAtRoot.nodes = atRule.nodes.filter(node => node.shouldMove);
         }
       });
       return parsedContent;
     });
-    console.log(commonRoot.toString());
+    fs.writeFileSync(commonFile, commonRoot.toString(), 'utf-8');
+    commonRoot.toResult();
   }
 }
 
